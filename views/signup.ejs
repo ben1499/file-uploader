@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <%- include("bootstrap") %>
+    <title>Signup - FileDrive</title>
+</head>
+<body>
+    <%- include("header") %>
+    <form action="" method="POST">
+        <div class="mb-3">
+            <label for="email" class="form-label">Email address</label>
+            <input type="email" name="email" class="form-control" value="<%= user ? user.email : ''%>" required id="email" aria-describedby="emailHelp">
+        </div>
+        <div class="mb-3">
+            <label for="password" class="form-label">Password</label>
+            <input type="password" name="password" class="form-control" required id="password">
+        </div>
+        <div class="mb-3">
+            <label for="confirm-password" class="form-label">Confirm Password</label>
+            <input type="password" name="confirm_password" class="form-control" required id="confirm-password">
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+        <ul>
+            <% if (errors) { %>
+            <% for (let i = 0; i < errors?.length; i++) { %>
+                <li><%= errors[i].msg %></li>
+            <% } } %>
+        </ul>
+    </form>
+</body>
+</html>
