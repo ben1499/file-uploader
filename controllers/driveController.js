@@ -66,7 +66,7 @@ function removeFromCloudinary(public_id) {
   })
 }
 
-exports.driveGet = async (req, res, next) => {
+exports.driveGet = asyncHandler(async (req, res, next) => {
   if (req.params.folderId) {
     const folder = await prisma.folder.findUnique({
       where: {
@@ -115,7 +115,7 @@ exports.driveGet = async (req, res, next) => {
   const formattedFolders = formatFolders(folders);
   res.render("drive", { list: formattedFiles.concat(formattedFolders), folderId: null, errors: req.session.errors });
   req.session.errors = [];
-};
+});
 
 exports.filePost = [
   upload.single("upload_file"),
@@ -190,8 +190,6 @@ exports.deleteFolder = asyncHandler(async(req, res, next) => {
     }
   });
 
-  console.log(deletedFolder);
-
   if (deletedFolder) {
     deletedFolder.files.forEach(async (file) => {
       const imageId = file.url.split("/").at(-1).split(".")[0];
@@ -229,7 +227,7 @@ exports.deleteFile = asyncHandler(async(req, res, next) => {
   }
 })
 
-exports.goBack = async(req, res, next) => {
+exports.goBack = asyncHandler(async(req, res, next) => {
   const folderId = Number(req.params.folderId);
   const folder = await prisma.folder.findUnique({
     where: {
@@ -241,4 +239,4 @@ exports.goBack = async(req, res, next) => {
   } else {
     res.redirect("/drive");
   }
-}
+})
