@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <%- include("bootstrap") %>
+    <title>Drive - FileDrive</title>
+</head>
+<body>
+    <%- include("header") %>
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#folder-modal">
+        New Folder
+    </button>   
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#file-modal">
+        Upload File
+    </button>   
+    <p><%= folderId %></p>
+    <ul>
+        <% errors?.map((error) => { %>
+            <li><%= error.msg %></li>
+        <% }) %>
+    </ul>
+
+    <% if (folderId) { %> 
+        <a href="<%= `/drive/back/${folderId}` %>"><button>Go Back</button> </a>
+    <% } %>
+    <table class="table">
+        <thead>
+            <tr>
+              <th scope="col">Name</th>
+              <th scope="col">Size</th>
+              <th scope="col">Created</th>
+              <th scope="col">Last Modified</th>
+              <th scope="col">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% list.map((item) => { %>
+                <tr>
+                    <% if (item.url) { %>
+                        <td><a href="<%= item.url %>" target="_blank"><%= item.name %></a></td>
+                    <% } else { %>
+                        <td><a href="<%= `/drive/${item.id}` %>"><%= item.name %></a></td>
+                    <% } %>
+                    <td><%= item.size %></td>
+                    <td><%= item.createdAt %></td>
+                    <td><%= item.modifiedAt %></td> 
+                    <!-- <td>
+                        <form action="/drive/" method="post"><button>Delete</button></form>
+                    </td> -->
+                    <% if (item.url) { %>
+                        <td><form action="<%= `/drive/file/${item.id}/delete` %>" method="post"><button>Delete</button></form></td>
+                    <% } else { %>
+                        <td><form action="<%= `/drive/folder/${item.id}/delete` %>" method="post"><button>Delete</button></form></td>
+                    <% } %>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>   
+    <div id="folder-modal" class="modal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Create New Folder</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="<%= folderId ? `/drive/folder/${folderId}` : '/drive/folder' %>" method="POST">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="folder_name" class="form-label">Folder Name</label>
+                            <input type="text" name="name" class="form-control" required id="folder_name" value="New Folder">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div id="file-modal" class="modal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Upload File</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="<%= folderId ? `/drive/file/${folderId}` : '/drive/file' %>" method="POST" enctype="multipart/form-data">
+                    <div class="modal-body">
+                        <input type="file" name="upload_file" id="file" required>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+<style>
+.hidden {
+    display: none;
+}
+</style>
+<script defer>
+    const uploadField = document.getElementById("file");
+    uploadField.onchange = function() {
+    if(this.files[0].size > 2097152) {
+       alert("File size must be below 2mb");
+       this.value = "";
+    }
+};
+</script>

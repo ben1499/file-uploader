@@ -9,6 +9,7 @@ const bcrypt = require("bcryptjs");
 
 const indexRouter = require("./routes/index");
 const userRouter = require("./routes/user");
+const driveRouter = require("./routes/drive");
 
 const app = express();
 
@@ -66,8 +67,6 @@ passport.serializeUser((user, done) => {
 
 passport.deserializeUser(async (id, done) => {
   try {
-    // const { rows } = await pool.query("SELECT * FROM users WHERE id = $1", [id]);
-    // const user = rows[0];
     const user = await prisma.user.findUnique({
       where: {
         id: id
@@ -90,6 +89,7 @@ app.use((req, res, next) => {
 
 app.use("/", indexRouter);
 app.use("/user", userRouter);
+app.use("/drive", driveRouter);
 
 const PORT = 3000;
 app.listen(PORT, () => console.log(`Listening on port ${PORT}!`));
