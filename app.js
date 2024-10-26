@@ -16,6 +16,7 @@ const app = express();
 const prisma = new PrismaClient();
 
 app.use(express.urlencoded({ extended: true }));
+app.use(express.static('public'));
 
 app.use(
     session({

@@ -85,7 +85,7 @@ exports.loginPost = [
         next();
     },
     passport.authenticate("local", {
-        successRedirect: "/",
+        successRedirect: "/drive",
         failureRedirect: "/user/login",
         failureMessage: true,
     })
