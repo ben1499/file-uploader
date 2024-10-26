@@ -184,10 +184,19 @@ exports.deleteFolder = asyncHandler(async(req, res, next) => {
   const deletedFolder = await prisma.folder.delete({
     where: {
       id: folderId
+    },
+    include: {
+      files: true
     }
   });
 
+  console.log(deletedFolder);
+
   if (deletedFolder) {
+    deletedFolder.files.forEach(async (file) => {
+      const imageId = file.url.split("/").at(-1).split(".")[0];
+      await removeFromCloudinary(imageId);
+    })
     if (deletedFolder.parentFolderId) {
       return res.redirect(`/drive/${deletedFolder.parentFolderId}`);
     } else {
