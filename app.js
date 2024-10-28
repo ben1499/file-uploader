@@ -6,6 +6,8 @@ const { PrismaClient } = require('@prisma/client');
 const passport = require("passport");
 const LocalStrategy = require('passport-local').Strategy;
 const bcrypt = require("bcryptjs");
+const RateLimit = require("express-rate-limit");
+const compression = require("compression");
 
 const indexRouter = require("./routes/index");
 const userRouter = require("./routes/user");
@@ -14,6 +16,15 @@ const driveRouter = require("./routes/drive");
 const app = express();
 
 const prisma = new PrismaClient();
+
+// Set up rate-limiter: max 35 requests per minute
+const limiter = RateLimit({
+  windowMs: 1 * 60 * 1000, // 1 minute
+  max: 35,
+});
+
+app.use(limiter);
+app.use(compression());
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
